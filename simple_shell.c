@@ -15,7 +15,7 @@
   */
 int main(int argc, char *argv[])
 {
-	int flag = 1, num_tokens = 0;
+	int num_tokens = 0;
 	char *line = NULL, *token;
 	size_t buffsize = 0;
 	ssize_t nbr_read_char;
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	pid_t pid;
 
 	(void)argc;
-	while (flag == 1)
+	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			print();
@@ -46,8 +46,14 @@ int main(int argc, char *argv[])
 		args[num_tokens] = NULL;
 		if (num_tokens > 0)
 		{
-			if ((_strcmp(args[0], "^C") == 0 || _strcmp(args[0], "exit") == 0) && (num_tokens == 1))
-				flag = 0;
+			if ((_strcmp(args[0], "^C") == 0 || _strcmp(args[0], "exit") == 0))
+			{
+				if (num_tokens > 1)
+				{
+					exit(atoi(args[1]));
+				}
+				exit(0);
+			}
 			else if (_strcmp(args[0], "env") == 0 && (num_tokens == 1))
 				print_env();
 			else if (args[0] != NULL)

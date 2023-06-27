@@ -19,8 +19,7 @@ int main(int argc, char *argv[])
 	char *line = NULL, *token;
 	size_t buffsize = 0;
 	ssize_t nbr_read_char;
-	char *args[MAX_ARGS + 1], *env[] = {NULL}, *programName = argv[0];
-	pid_t pid;
+	char *args[MAX_ARGS + 1], *programName = argv[0];
 
 	(void)argc;
 	while (1)
@@ -46,33 +45,7 @@ int main(int argc, char *argv[])
 		args[num_tokens] = NULL;
 		if (num_tokens > 0)
 		{
-			if ((_strcmp(args[0], "^C") == 0 || _strcmp(args[0], "exit") == 0))
-			{
-				if (num_tokens > 1)
-				{
-					exit(atoi(args[1]));
-				}
-				exit(0);
-			}
-			else if (_strcmp(args[0], "env") == 0 && (num_tokens == 1))
-				print_env();
-			else if (args[0] != NULL)
-			{
-				args[0] = path(args[0]);
-				pid = fork();
-				if (pid == 0)
-				{
-					if (execve(args[0], args, env) == -1)
-					{
-						perror(programName);
-						exit(EXIT_FAILURE);
-					}
-				}
-				else if (pid == -1)
-					perror(programName);
-				else
-					wait(NULL);
-			}
+			command(num_tokens, args, programName);
 		}
 		num_tokens = 0;
 	}
